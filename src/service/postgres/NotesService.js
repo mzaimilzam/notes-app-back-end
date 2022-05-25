@@ -3,7 +3,8 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const { mapDBToModel } = require('../../utils/Index');
+// eslint-disable-next-line import/no-unresolved
+const { mapDBToModel } = require('../../utils');
 
 class NotesService {
   constructor() {
@@ -16,7 +17,7 @@ class NotesService {
     const updatedAt = createdAt;
 
     const query = {
-      text: 'Insert INTO notes VALUES ($1, $2, $3. $4, $5, $6) RETURNING id',
+      text: 'Insert INTO notes VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
       values: [id, title, body, tags, createdAt, updatedAt],
     };
 

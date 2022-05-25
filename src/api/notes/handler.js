@@ -22,7 +22,7 @@ class NotesHandler {
 
       const response = h.response({
         status: 'success',
-        message: 'Catatan berhasil di tambahkan',
+        message: 'Catatan berhasil ditambahkan',
         data: {
           noteId,
         },
@@ -38,6 +38,7 @@ class NotesHandler {
         response.code(error.statusCode);
         return response;
       }
+
       // Server ERROR!
       const response = h.response({
         status: 'error',
@@ -61,9 +62,8 @@ class NotesHandler {
 
   async getNoteByIdHandler(request, h) {
     try {
-      const id = request.params;
-
-      const note = await this._service.getNotesById(id);
+      const { id } = request.params;
+      const note = await this._service.getNoteById(id);
       return {
         status: 'success',
         data: {
@@ -101,7 +101,7 @@ class NotesHandler {
 
       return {
         status: 'success',
-        message: 'Catatan berhasil di perbaharui',
+        message: 'Catatan berhasil diperbarui',
       };
     } catch (error) {
       if (error instanceof ClientError) {
@@ -126,7 +126,7 @@ class NotesHandler {
 
   async deleteNoteByIdHandler(request, h) {
     try {
-      const id = request.params;
+      const { id } = request.params;
       await this._service.deleteNoteById(id);
 
       return {
