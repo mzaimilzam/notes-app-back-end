@@ -2,7 +2,7 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const bcrypt = require('bcrypt');
-const InVariantError = require('../../exceptions/InvariantError');
+const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthenticationError = require('../../exceptions/AuthenticationError');
 
@@ -11,32 +11,37 @@ class UserService {
     this._pool = new Pool();
   }
 
-  async AddUser({ username, password, fullName }) {
-    await this.VerifyNewUsername(username);
-
+  async addUser({ username, password, fullname }) {
+    console.log('asd asd asd');
+    await this.verifyNewUsername(username);
+    console.log('asd asd asd');
     const id = `user-${nanoid(16)}`;
     const hashedPassword = await bcrypt.hash(password, 10);
     const query = {
       text: 'INSERT INTO users VALUES ($1, $2, $3, $4) returning id',
-      values: [id, username, hashedPassword, fullName],
+      values: [id, username, hashedPassword, fullname],
     };
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new InVariantError('User gagal ditambahkan');
+      throw new InvariantError('User gagal ditambahkan');
     }
     return result.rows[0].id;
   }
 
-  async VerifyNewUsername(username) {
+  async verifyNewUsername(username) {
     const query = {
       text: 'SELECT username FROM users WHERE username = $1',
       values: [username],
     };
     const result = await this._pool.query(query);
 
+    console.log('verifiyusername');
+    console.log(result.rows.length);
+
     if (result.rows.length > 0) {
-      throw new InVariantError('Gagal menambahkan user. Username sudah digunakan.');
+      throw new InvariantError('Gagal menambahkan user. Username sudah digunakan.');
+      // throw new InvariantError('Gagal menambahkan user. Username sudah digunakan.');
     }
   }
 
@@ -55,7 +60,8 @@ class UserService {
     return result.rows[0];
   }
 
-  async VerifyUserCredential(username, password) {
+  async verifyUserCredential(username, password) {
+    console.log('verifyUserCredential');
     const query = {
       text: 'SELECT id, password FROM users WHERE username = $1',
       values: [username],

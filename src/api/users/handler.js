@@ -16,7 +16,8 @@ class UsersHandler {
       this._validator.validateUsersPayload(request.payload);
       const { username, password, fullname } = request.payload;
 
-      const userId = await this._service.AddUser({ username, password, fullname });
+      const userId = await this._service.addUser({ username, password, fullname });
+      console.log(userId);
       const response = h.response({
         status: 'success',
         message: 'User berhasil ditambahkan',
@@ -28,10 +29,12 @@ class UsersHandler {
       return response;
     } catch (error) {
       if (error instanceof ClientError) {
+        console.log('gg');
         const response = h.response({
           status: 'fail',
           message: error.message,
         });
+        console.log(error.message);
         response.code(error.statusCode);
         return response;
       }
@@ -49,7 +52,7 @@ class UsersHandler {
   async getUserByIdHandler(request, h) {
     try {
       const { id } = request.params;
-      const user = await this._service.getUserById(id);
+      const user = await this._service.GetUserById(id);
       return {
         status: 'success',
         data: {
