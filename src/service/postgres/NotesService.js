@@ -3,6 +3,7 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const AuthorizationError = require('../../exceptions/AuthorizationError');
 // eslint-disable-next-line import/no-unresolved
 const { mapDBToModel } = require('../../utils');
 
@@ -11,14 +12,16 @@ class NotesService {
     this._pool = new Pool();
   }
 
-  async addNote({ title, tags, body }) {
+  async addNote({
+    title, tags, body, owner,
+  }) {
     const id = nanoid(16);
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
     const query = {
-      text: 'Insert INTO notes VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-      values: [id, title, body, tags, createdAt, updatedAt],
+      text: 'Insert INTO notes VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+      values: [id, title, body, tags, createdAt, updatedAt, owner],
     };
 
     const result = await this._pool.query(query);
@@ -29,8 +32,12 @@ class NotesService {
     return result.rows[0].id;
   }
 
-  async getNotes() {
-    const result = await this._pool.query('SELECT * FROM notes');
+  async getNotes(owner) {
+    const query = {
+      text: 'SELECT * FROM notes WHERE owner=$1',
+      values: [owner],
+    };
+    const result = await this._pool.query(query);
     return result.rows.map(mapDBToModel);
   }
 
@@ -46,6 +53,24 @@ class NotesService {
     }
 
     return result.rows.map(mapDBToModel)[0];
+  }
+
+  async verifyNoteOwner(id, owner) {
+    const query = {
+      text: 'SELECT * FROM notes WHERE id = $1',
+      values: [id],
+    };
+
+    const result = this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw NotFoundError('Catatan tidak di temukan');
+    }
+    const note = result.rows[0];
+
+    if (note.owner !== owner) {
+      throw new AuthorizationError('Anda tidak berhak mengakses resource ini');
+    }
   }
 
   async editNoteById(id, { title, body, tags }) {
