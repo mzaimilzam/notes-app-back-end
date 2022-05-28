@@ -34,7 +34,7 @@ class NotesService {
 
   async getNotes(owner) {
     const query = {
-      text: 'SELECT * FROM notes WHERE owner=$1',
+      text: 'SELECT * FROM notes WHERE owner = $1',
       values: [owner],
     };
     const result = await this._pool.query(query);
@@ -61,7 +61,7 @@ class NotesService {
       values: [id],
     };
 
-    const result = this._pool.query(query);
+    const result = await this._pool.query(query);
 
     if (!result.rows.length) {
       throw NotFoundError('Catatan tidak di temukan');
