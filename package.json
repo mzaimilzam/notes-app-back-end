@@ -1,7 +1,6 @@
 {
   "name": "notes-app-back-end",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -22,11 +21,23 @@
   "dependencies": {
     "@hapi/hapi": "^20.2.2",
     "@hapi/jwt": "^2.1.1",
+    "amqplib": "^0.10.0",
     "bcrypt": "^5.0.1",
+    "dot": "^1.1.3",
     "dotenv": "^16.0.1",
+    "env": "^0.0.2",
     "joi": "^17.6.0",
     "nanoid": "^3.3.4",
     "node-pg-migrate": "^6.2.1",
     "pg": "^8.7.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mzaimilzam/notes-app-back-end.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mzaimilzam/notes-app-back-end/issues"
+  },
+  "homepage": "https://github.com/mzaimilzam/notes-app-back-end#readme",
+  "description": ""
 }
